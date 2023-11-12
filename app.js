@@ -26,6 +26,7 @@ app.get('/', (req, res) => {
 
 // showing All campgrounds
 app.get('/campgrounds', async (req, res) => {
+    console.log('showing All Campgrounds (MAIN PAGE)')
     const campgrounds = await Campground.find({})
     res.render('campgrounds/index', { campgrounds })
 })
@@ -65,6 +66,13 @@ app.put('/campgrounds/:id', async (req, res) => {
     // campground.location = location
     // await campground.save()
     res.redirect(`/campgrounds/${id}`)
+})
+
+app.delete('/campgrounds/:id', async (req, res) => {
+    console.log('delete')
+    const { id } = req.params
+    await Campground.findByIdAndDelete(id)
+    res.redirect('/campgrounds')
 })
 
 const port = 3000
