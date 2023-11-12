@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose')
 const Campground = require('./models/campground')
+const methodOverride = require('method-override')
 
 main().catch(err => console.log(err));
 async function main() {
@@ -16,6 +17,7 @@ app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
 app.use(express.urlencoded({ extended: true }))
+app.use(methodOverride('_method'))
 
 
 app.get('/', (req, res) => {
@@ -45,6 +47,24 @@ app.get('/campgrounds/:id', async (req, res) => {
     console.log(`showing campground bia /GET campground/id:${id}`)
     const campground = await Campground.findById(id)
     res.render('campgrounds/show', { campground })
+})
+
+// modifing campground
+app.get('/campgrounds/:id/edit', async (req, res) => {
+    const campground = await Campground.findById(req.params.id)
+    res.render('campgrounds/edit', { campground })
+})
+
+app.put('/campgrounds/:id', async (req, res) => {
+    const { id } = req.params
+    const campground = await Campground.findByIdAndUpdate(id, {...req.body.campground})
+    // 위의 코드와 아래의 코드는 동일하게 동작함
+    // const campground = await Campground.findById(id)
+    // const { title, location } = req.body.campground
+    // campground.title = title
+    // campground.location = location
+    // await campground.save()
+    res.redirect(`/campgrounds/${id}`)
 })
 
 const port = 3000
