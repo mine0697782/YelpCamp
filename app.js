@@ -3,6 +3,7 @@ const path = require('path')
 const mongoose = require('mongoose')
 const Campground = require('./models/campground')
 const methodOverride = require('method-override')
+const morgan = require('morgan')
 
 main().catch(err => console.log(err));
 async function main() {
@@ -19,6 +20,7 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
+app.use(morgan('dev'))
 
 app.get('/', (req, res) => {
     res.render('home')
@@ -26,7 +28,7 @@ app.get('/', (req, res) => {
 
 // showing All campgrounds
 app.get('/campgrounds', async (req, res) => {
-    console.log('showing All Campgrounds (MAIN PAGE)')
+    // console.log('showing All Campgrounds (MAIN PAGE)')
     const campgrounds = await Campground.find({})
     res.render('campgrounds/index', { campgrounds })
 })
@@ -45,7 +47,7 @@ app.post('/campgrounds', async (req, res) => {
 // showing campground by id
 app.get('/campgrounds/:id', async (req, res) => {
     const { id } = req.params
-    console.log(`showing campground bia /GET campground/id:${id}`)
+    // console.log(`showing campground bia /GET campground/id:${id}`)
     const campground = await Campground.findById(id)
     res.render('campgrounds/show', { campground })
 })
@@ -75,7 +77,10 @@ app.delete('/campgrounds/:id', async (req, res) => {
     res.redirect('/campgrounds')
 })
 
-const port = 3000
-app.listen(port, () => {
-    console.log(`Serving on port ${port}`)
+app.use((req, res) => {
+    res.status(404).send('NOT FOUND!')
+})
+
+app.listen(3000, () => {
+    console.log(`Serving on port 3000`)
 })
