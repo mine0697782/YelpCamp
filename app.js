@@ -22,8 +22,21 @@ app.use(methodOverride('_method'))
 
 app.use(morgan('dev'))
 
+const verifyPassword = (req, res, next) => {
+    const { password } = req.query
+    if (password === 'chickennugget') {
+        next()
+    } else {
+        res.send("SORRY, IT'S PROTECTED. YOU NEED PASSWORD")
+    }
+}
+
 app.get('/', (req, res) => {
     res.render('home')
+})
+
+app.get('/secret', verifyPassword, (req, res) => {
+    res.send('My Secret')
 })
 
 // showing All campgrounds
